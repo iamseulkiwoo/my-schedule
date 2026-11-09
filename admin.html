@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>관리자 · 일정 예약</title>
+<style>
+:root{color-scheme:light;--bg:#f6f7f9;--fg:#1c1f26;--card:#fff;--mut:#7a808c;--ac:#2f3542;--bd:#e3e5ea;--c1:#e6e8ec;--t1:#3b3f47;--c2:#c9ccd3;--td:#fff4cf;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 -apple-system,"Pretendard","Noto Sans KR",sans-serif;touch-action:manipulation}
+body.lock main{display:none}
+main{max-width:980px;margin:0 auto;padding:10px 8px 90px}
+h1{font-size:18px;margin:4px 0}h2{font-size:15px;margin:0 0 6px}
+input,select,textarea{width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px;background:#fff;color:var(--fg);font:inherit;font-size:16px}
+textarea{min-height:70px}input[type=checkbox]{width:auto}
+button{padding:9px 14px;border:0;border-radius:8px;background:var(--ac);color:#fff;font:inherit;cursor:pointer}
+button.g{background:#fff;color:var(--fg);border:1px solid var(--bd)}button:disabled{opacity:.4;cursor:default}
+label{font-size:12px;color:var(--mut);display:block}.m{color:var(--mut);font-size:12px;margin:4px 0}
+.top,.nav,.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.top{justify-content:space-between}.nav{margin:8px 0}.row>*{flex:1;min-width:110px}
+.card,details{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin:8px 0}summary{cursor:pointer;font-weight:600}
+.notice{background:#fff8e1;border:1px solid #f1e2a8;border-radius:10px;padding:10px 12px;margin:8px 0;white-space:pre-wrap}
+details ol{margin:6px 0 0;padding-left:20px}details li{margin:3px 0}
+.r{display:grid;grid-template-columns:28px repeat(7,minmax(0,1fr))}
+.dh{text-align:center;font-weight:600;padding:4px 0;border-radius:8px}.dh small{display:block;font-weight:400;color:var(--mut);font-size:11px}.dh.td{background:var(--ac);color:#fff}.dh.td small{color:#d5d8de}.dh.past{opacity:.35}
+.cp{width:calc(100% - 4px);margin:2px;padding:5px 0;font-size:10.5px;background:#fff;color:var(--fg);border:1px solid var(--bd);letter-spacing:-.5px}
+.ax{position:relative}.ax i{position:absolute;right:3px;font-style:normal;font-size:10px;color:var(--mut);transform:translateY(-6px)}
+.col{position:relative;border-left:1px solid var(--bd);background-color:#fff;background-image:linear-gradient(to bottom,transparent calc(100% - 1px),var(--bd) 0);cursor:pointer}
+.col.td{background-color:var(--td)}.col.past{cursor:not-allowed;background-color:#eceef2}
+.fog{position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(255,255,255,.6) 0 6px,rgba(0,0,0,.035) 6px 12px);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.ev{position:absolute;left:1px;right:1px;border-radius:5px;padding:2px 3px;overflow:hidden;font-size:10.5px;line-height:1.25;background:var(--c1);color:var(--t1);cursor:default}
+.ev.me{background:var(--c2)}.ev.hid{background:transparent;border:1px dashed var(--mut);opacity:.6}.ev b{display:block;font-weight:600}.ev small{opacity:.75;font-size:9.5px}
+.ghost{position:absolute;left:1px;right:1px;border:2px dashed var(--ac);border-radius:5px;pointer-events:none}.ghost.bad{border-color:#e5484d}
+#bk{position:fixed;inset:0;background:rgba(0,0,0,.12);display:none;z-index:4}
+#sh{position:fixed;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;background:#fff;border:1px solid var(--bd);border-radius:16px 16px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom,0px));max-height:85vh;overflow:auto;box-shadow:0 -6px 24px rgba(0,0,0,.15);display:none;z-index:5}#sh.on{display:block}
+#sh .row{margin:8px 0}.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.chip{padding:7px 14px;background:#fff;color:var(--fg);border:1px solid var(--bd)}.chip.on{background:var(--ac);color:#fff}
+#gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:20}#gate .card{width:min(320px,90vw)}#gate button{margin-top:8px;width:100%}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:20px;opacity:0;transition:.2s;pointer-events:none;z-index:30;max-width:92%;text-align:center}#toast.on{opacity:1}
+@media(min-width:720px){body{font-size:15px}.ev{font-size:12px}.ev small{font-size:11px}.cp{font-size:12px}.r{grid-template-columns:36px repeat(7,minmax(0,1fr))}
+#sh{bottom:auto;top:50%;left:50%;right:auto;width:480px;transform:translate(-50%,-50%);border-radius:16px;max-height:90vh}#bk{background:rgba(0,0,0,.25)}}
+</style></head><body class="lock"><main>
+<div class="top"><h1 id="ti0"></h1><button class="g" id="mb" hidden>← 관리자로</button></div>
+<div id="adm" hidden>
+<details open><summary>📖 관리자 사용 방법</summary><ol>
+<li>Structured(아이폰 앱) → [설정] → [개인정보 &amp; 권한] → [데이터 내보내기]로 JSON 파일을 저장해요.</li>
+<li>아래 ① 카드에서 그 파일을 올리면 일정이 반영돼요. 올릴 때마다 이전 Structured 내용은 교체되고, 숨기기 설정은 유지돼요.</li>
+<li>표의 블록을 누르면 <b>숨기기</b>(그 시간을 빈 시간으로 처리) 또는 <b>같은 제목 모두 숨기기</b>를 할 수 있어요. 숨긴 블록은 점선으로 보여요.</li>
+<li>Structured에 없는 일정은 표의 빈 곳을 누르거나 ② 버튼으로 추가해요.</li>
+<li>공지는 ③에 쓰면 예약 화면 맨 위에 보여요.</li>
+<li>마지막으로 ④ <b>GitHub에 공개 반영</b>을 누르면 1~2분 뒤 예약 링크에 적용돼요. (설정에 저장소·토큰 입력 필요)</li>
+<li>예약자에게는 관리자 주소가 아닌 <b>예약 주소(index)</b>만 보내세요.</li></ol></details>
+<div class="card"><h2>① Structured 일정 불러오기</h2><p class="m">체크리스트·메모는 읽지 않고 제목과 시간만 사용해요. 종일 일정과 시간 없는 할 일은 제외돼요.</p><input type="file" id="stf" accept=".json,application/json"><p class="m" id="sti"></p></div>
+<div class="card"><h2>② 직접 추가</h2><p class="m">진한 회색 블록이 직접 추가한 일정이에요.</p><button id="addb">+ 일정 추가</button></div>
+<div class="card"><h2>③ 공지사항</h2><textarea id="nt2" placeholder="예: 시험 기간(12/10~12/20)에는 예약이 어려워요."></textarea></div>
+<div class="card"><h2>④ 공개 반영</h2><div class="row"><button id="gh">GitHub에 공개 반영</button><button class="g" id="js">JSON 복사(수동)</button><button class="g" id="pvb">예약 화면 미리보기</button></div></div>
+<details><summary>설정</summary>
+<div class="row" style="margin-top:6px"><div><label>이름(예약 화면 표시)</label><input id="sn"></div><div><label>최소 가능 길이(분)</label><input type="number" id="smn" step="5" min="5"></div></div>
+<div class="row"><div><label>표시 시작</label><input type="time" id="sws"></div><div><label>표시 종료</label><select id="swe"><option value="1320">22:00</option><option value="1440">24:00</option><option value="1500">새벽 1:00</option><option value="1560">새벽 2:00</option></select></div></div>
+<label style="margin-top:6px"><input type="checkbox" id="shd"> 예약 화면에서 제목 숨기고 시간 블록만 표시</label>
+<div class="row" style="margin-top:6px"><div><label>GitHub 저장소 (예: 아이디/my-schedule)</label><input id="gr"></div><div><label>GitHub 토큰 (이 기기에만 저장)</label><input id="gt" type="password"></div></div>
+<div class="row" style="margin-top:6px"><button class="g" id="uh">숨김 모두 해제</button><button class="g" id="rs">직접 추가 일정 모두 삭제</button></div></details>
+</div>
+<div id="nt" class="notice" hidden></div>
+<details id="gd" open><summary>📖 이용 방법</summary><ol>
+<li>아래 표에서 <b>비어 있는(흰색) 공간</b>을 터치하면 예약창이 열려요.</li>
+<li>시작·종료 시간, 이름/팀, 목적을 입력하고 <b>‘예약 요청 멘트 복사’</b>를 누르세요.</li>
+<li>복사된 멘트를 <b>개인 채팅(카톡, 문자 등)</b>에 붙여넣어 보내주세요.</li>
+<li>날짜 아래 ‘가능 시간 복사’로 그날의 빈 시간을 복사할 수도 있어요.</li></ol></details>
+<p class="m" id="up"></p>
+<div class="nav"><button class="g" id="pv">◀</button><b id="wl"></b><button class="g" id="nx">▶</button><button class="g" id="tdy">이번 주</button><button class="g" id="ca" style="margin-left:auto">주간 전체 복사</button></div>
+<div id="cal"></div></main><div id="bk"></div><div id="sh"></div><div id="toast"></div>
+<div id="gate" hidden><div class="card"><h2>🔒 관리자</h2><input id="gp" type="password" inputmode="numeric" placeholder="비밀번호" autocomplete="off"><button id="gb">확인</button></div></div>
+<script>
+const BUILD='adm';
+const $=s=>document.querySelector(s),P=n=>String(n).padStart(2,'0'),hm=m=>P(Math.floor(m/60)%24)+':'+P(m%60),tm=v=>{const[a,b]=v.split(':');return+a*60+ +b};
+const WD='일월화수목금토',DN=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+const key=d=>`${String(d.getFullYear()).slice(2)}/${d.getMonth()+1}/${d.getDate()}`;
+const pk=k=>{const[a,b,c]=k.split('/').map(Number);return new Date(2000+a,b-1,c)};
+const iso=k=>{const[a,b,c]=k.split('/').map(Number);return`20${a}-${P(b)}-${P(c)}`};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const todayD=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
+let D,admin=BUILD==='adm',preview=false,wk=0,sel=null,cur=null,PPM=.8,RM=[];
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2600)}
+async function copy(t){try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(_){}a.remove()}}
+const monday=o=>{const d=todayD();d.setDate(d.getDate()-((d.getDay()+6)%7)+o*7);return d};
+const dayEv=(k,w)=>D.events.filter(e=>e.date?e.date===k:(e.days||[]).includes(w));
+function free(k,w){const b=dayEv(k,w).filter(e=>!e.h).map(e=>[e.s,e.e]).sort((a,b)=>a[0]-b[0]),f=[];let c=D.ws;for(const[s,e]of b){if(s>c)f.push([c,Math.min(s,D.we)]);c=Math.max(c,e)}if(c<D.we)f.push([c,D.we]);return f.filter(r=>r[1]-r[0]>=D.min)}
+const line=(k,f)=>`${k} ${f.map(r=>hm(r[0])+'~'+hm(r[1])).join(', ')} 가능`;
+const tw=v=>{const t=tm(v);return t<D.ws?t+1440:t};
+const showSh=h=>{$('#sh').innerHTML=h;$('#sh').classList.add('on');$('#bk').style.display='block'};
+const closeSh=()=>{$('#sh').classList.remove('on');$('#bk').style.display='none';sel=null;cur=null;render()};
+$('#bk').onclick=closeSh;
+function render(){PPM=innerWidth>=720?1.05:.8;const m=monday(wk),H=(D.we-D.ws)*PPM,T=todayD(),today=key(T);RM=[];
+ const y0=(Math.ceil(D.ws/60)*60-D.ws)*PPM,bg=`background-size:100% ${60*PPM}px;background-position:0 ${y0-60*PPM}px`;
+ let h='<div></div>',c='<div></div>',b=`<div class="ax" style="height:${H}px">`;
+ for(let t=Math.ceil(D.ws/60)*60;t<D.we;t+=60)b+=`<i style="top:${(t-D.ws)*PPM}px">${(t/60)%24}</i>`;b+='</div>';
+ for(let i=0;i<7;i++){const d=new Date(m);d.setDate(m.getDate()+i);const k=key(d),w=d.getDay(),past=!admin&&d<T,td=k===today;
+  h+=`<div class="dh ${td?'td':''} ${past?'past':''}">${WD[w]}<small>${d.getMonth()+1}/${d.getDate()}</small></div>`;
+  c+=`<div><button class="cp" ${past?'disabled':''} data-k="${k}" data-w="${w}">${past?'지난 날':'가능 시간 복사'}</button></div>`;
+  b+=`<div class="col ${td?'td':''} ${past?'past':''}" data-k="${k}" data-p="${past?1:0}" style="height:${H}px;${bg}">`+(past?'<div class="fog"></div>':dayEv(k,w).map(e=>{const s=Math.max(e.s,D.ws),en=Math.min(e.e,D.we);if(en<=s)return'';
+   return`<div class="ev ${e.id&&admin?'me':''} ${e.h?'hid':''}" data-i="${RM.push(e)-1}" style="top:${(s-D.ws)*PPM}px;height:${(en-s)*PPM-1}px"><b>${esc(e.title)}</b><small>${hm(e.s)}~${hm(e.e)}</small></div>`}).join(''))
+  +(sel&&sel.k===k&&sel.e>sel.t?`<div class="ghost ${sel.bad?'bad':''}" style="top:${(sel.t-D.ws)*PPM}px;height:${(sel.e-sel.t)*PPM}px"></div>`:'')+'</div>'}
+ $('#cal').innerHTML=`<div class="r">${h}</div><div class="r">${c}</div><div class="r">${b}</div>`;
+ const e=new Date(m);e.setDate(e.getDate()+6);$('#wl').textContent=`${key(m)} ~ ${key(e)}`;$('#pv').disabled=!admin&&wk<=0;
+ $('#ti0').textContent=admin?'📅 관리자 모드':`📅 ${D.name?D.name+'님 ':''}일정 예약`;$('#up').textContent=admin?'':(D.updated?'업데이트 '+D.updated:'');
+ $('#gd').hidden=admin;$('#nt').hidden=admin||!D.notice;$('#nt').textContent=D.notice||''}
+$('#cal').onclick=e=>{const cp=e.target.closest('.cp');
+ if(cp&&!cp.disabled){const k=cp.dataset.k,f=free(k,+cp.dataset.w);if(!f.length)return toast(k+' 가능 시간 없음');copy(line(k,f));return toast(k+' 가능 시간 복사 완료')}
+ const ev=e.target.closest('.ev');if(ev){if(admin)openAct(RM[+ev.dataset.i]);return}
+ const col=e.target.closest('.col');if(!col)return;if(col.dataset.p==='1')return toast('지난 날짜는 예약할 수 없어요');
+ const t=Math.floor((D.ws+(e.clientY-col.getBoundingClientRect().top)/PPM)/30)*30;
+ admin?openEdit(null,col.dataset.k,t):openBook(col.dataset.k,t)};
+$('#ca').onclick=()=>{const m=monday(wk),o=[],T=todayD();for(let i=0;i<7;i++){const d=new Date(m);d.setDate(m.getDate()+i);if(!admin&&d<T)continue;const f=free(key(d),d.getDay());if(f.length)o.push(line(key(d),f))}copy(o.join('\n'));toast('이번 주 가능 시간 복사 완료')};
+$('#pv').onclick=()=>{wk--;render()};$('#nx').onclick=()=>{wk++;render()};$('#tdy').onclick=()=>{wk=0;render()};
+// 예약
+function openBook(k,t){sel={k,t,e:Math.min(t+60,D.we),p:'회의'};
+ showSh(`<h2>${k} (${WD[pk(k).getDay()]}요일) 예약 요청</h2><div class="row"><div><label>시작</label><input type="time" step="300" id="bt" value="${hm(sel.t)}"></div><div><label>종료</label><input type="time" step="300" id="be" value="${hm(sel.e)}"></div></div><p id="bm" class="m"></p>
+ <input id="bn" placeholder="이름/팀 (예: 홍길동/OO팀)"><div class="chips" id="pp">${['회의','개인활동','기타'].map(p=>`<button class="chip ${p=='회의'?'on':''}" data-p="${p}">${p}</button>`).join('')}</div><input id="bx" placeholder="기타 목적을 입력하세요" hidden>
+ <div class="row" style="margin-top:10px"><button id="rq">예약 요청 멘트 복사</button><button class="g" id="cl">닫기</button></div><p class="m">복사한 멘트를 개인 채팅(카톡, 문자 등)에 붙여넣어 보내주세요.</p>`);
+ $('#bt').oninput=$('#be').oninput=chk;chk()}
+function chk(){sel.t=tw($('#bt').value||'00:00');sel.e=tw($('#be').value||'00:00');const past=new Date(pk(sel.k).getTime()+sel.t*6e4)<new Date();
+ const ok=!past&&sel.e>sel.t&&free(sel.k,pk(sel.k).getDay()).some(r=>r[0]<=sel.t&&sel.e<=r[1]);sel.bad=!ok;
+ $('#bm').textContent=ok?`✅ ${hm(sel.t)}~${hm(sel.e)} 예약 가능`:sel.e<=sel.t?'⚠ 종료가 시작보다 늦어야 해요':past?'⚠ 지난 시간이에요':'⚠ 이 시간은 비어 있지 않아요 (빈 구간 안에서 입력해주세요)';render();return ok}
+const josa=n=>{const c=n.replace(/[^가-힣A-Za-z0-9]+$/,'').slice(-1);return/[가-힣]/.test(c)?((c.charCodeAt(0)-44032)%28?'이':'가'):'이(가)'};
+function msg(){if(!chk())return toast('이 시간은 예약할 수 없어요'),null;const n=$('#bn').value.trim(),p=sel.p==='기타'?$('#bx').value.trim():sel.p;
+ if(!n)return toast('이름/팀을 입력해주세요'),null;if(!p)return toast('기타 목적을 입력해주세요'),null;
+ return`${sel.k} ${hm(sel.t)}~${hm(sel.e)} ${n}${josa(n)} ${p} 목적으로 예약을 요청합니다`}
+$('#sh').onclick=async e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.id==='cl')return closeSh();
+ if(b.dataset.p){sel.p=b.dataset.p;document.querySelectorAll('#pp .chip').forEach(c=>c.classList.toggle('on',c===b));$('#bx').hidden=sel.p!=='기타'}
+ if(b.id==='rq'){const t=msg();if(t){await copy(t);toast('예약 요청 멘트 복사 완료 · 개인 채팅에 붙여넣어 보내주세요')}}};
+
+
+const PH='4329b8a1e243acc8fd6bf9ae662b375c88abed5b61a331b10a011b97e14168d6';
+let S={me:[],imp:{at:'',n:0,ev:[]},hid:{},hidT:[],notice:'',ws:480,we:1500,min:30,name:'',hide:false,gr:'',gt:''};
+try{const j=localStorage.getItem('sch2');if(j)S=Object.assign(S,JSON.parse(j))}catch(e){}
+const save=()=>{try{localStorage.setItem('sch2',JSON.stringify(S))}catch(e){}};
+const all=()=>S.imp.ev.concat(S.me),hk=e=>e.id||`${e.date}|${e.s}|${e.e}|${e.title}`,isH=e=>!!S.hid[hk(e)]||S.hidT.includes(e.title);
+const mk=()=>({name:S.name,notice:S.notice,ws:S.ws,we:S.we,min:S.min,events:all().map(e=>({...e,h:isH(e)}))});
+const pubData=()=>{const T=todayD();return{name:S.name,notice:S.notice,ws:S.ws,we:S.we,min:S.min,updated:key(new Date()),events:all().filter(e=>!isH(e)&&(e.days||pk(e.date)>=T)).map(e=>({date:e.date,days:e.days,s:e.s,e:e.e,title:S.hide?'일정':e.title}))}};
+
+const fk=s=>`${s.slice(2,4)}/${+s.slice(5,7)}/${+s.slice(8,10)}`,pdt=s=>new Date(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10));
+function expand(d){const ev=[],det=new Set(),f=new Date();f.setHours(0,0,0,0);f.setDate(f.getDate()-7);const N=180,mon=x=>{const y=new Date(x);y.setDate(y.getDate()-((y.getDay()+6)%7));return y};
+ for(const o of d.occurrences||[])if(!o._deleted&&o.is_detached)det.add(o.recurring+'|'+o.day);
+ for(const t of d.tasks||[])if(!t._deleted&&!t.is_in_inbox&&!t.is_all_day&&t.start_time!=null&&t.duration>0&&t.day){const s=Math.round(t.start_time*60);ev.push({date:fk(t.day),s,e:s+t.duration,title:t.title||'일정'})}
+ for(const r of d.recurrings||[]){if(r._deleted||r.is_all_day||!r.duration||r.start_time==null||r.recurring_type!==2)continue;
+  const sd=pdt(r.start_day),ed=r.end_day>=r.start_day?pdt(r.end_day):null,s=Math.round(r.start_time*60),iv=r.interval||1;
+  for(let i=0;i<N;i++){const x=new Date(f);x.setDate(f.getDate()+i);if(x<sd||(ed&&x>ed)||!r[DN[x.getDay()]])continue;
+   if(Math.round((mon(x)-mon(sd))/6048e5)%iv)continue;const ds=`${x.getFullYear()}-${P(x.getMonth()+1)}-${P(x.getDate())}`;
+   if(det.has(r.id+'|'+ds))continue;ev.push({date:fk(ds),s,e:s+r.duration,title:r.title||'일정'})}}
+ const seen=new Set();return ev.filter(e=>{const q=e.date+e.s+e.e+e.title;if(seen.has(q))return false;seen.add(q);return true})}
+
+async function gate(){try{if(sessionStorage.getItem('ok')==='1')return}catch(e){}
+ $('#gate').hidden=false;$('#gp').onkeydown=e=>{if(e.key==='Enter')$('#gb').click()};
+ return new Promise(res=>{$('#gb').onclick=async()=>{if(!(window.crypto&&crypto.subtle))return toast('보안 연결(https)에서만 비밀번호 확인이 가능해요');const h=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('sch:'+$('#gp').value)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+  if(h===PH){try{sessionStorage.setItem('ok','1')}catch(e){}$('#gate').hidden=true;res()}else{toast('비밀번호가 달라요');$('#gp').value=''}}})}
+function refresh(){if(admin)D=mk();$('#sti').textContent=S.imp.at?`마지막 가져오기 ${S.imp.at} · 일정 ${S.imp.n}개`:'아직 가져온 파일이 없어요';render()}
+function setMode(){$('#adm').hidden=!admin;$('#mb').hidden=!preview;
+ if(admin){$('#sn').value=S.name;$('#sws').value=hm(S.ws);$('#swe').value=S.we;$('#smn').value=S.min;$('#shd').checked=S.hide;$('#gr').value=S.gr;$('#gt').value=S.gt;$('#nt2').value=S.notice}}
+function openAct(e){cur=e;const k=hk(e),ht=S.hidT.includes(e.title),when=e.date?e.date:'매주 '+e.days.map(w=>WD[w]).join('');
+ showSh(`<h2>${esc(e.title)}</h2><p class="m">${when} ${hm(e.s)}~${hm(e.e)} · ${e.id?'직접 추가':'Structured'}${isH(e)?' · 숨김 상태':''}</p>
+ <div class="row">${ht?'':`<button id="hd">${S.hid[k]?'숨김 해제':'이 일정 숨기기'}</button>`}<button class="g" id="ht">${ht?'같은 제목 숨김 해제':'같은 제목 모두 숨기기'}</button></div>
+ ${e.id?'<div class="row"><button class="g" id="ed">수정</button><button class="g" id="dl">삭제</button></div>':''}<div class="row"><button class="g" id="cl">닫기</button></div>`)}
+function openEdit(id,k,t){const o=id?S.me.find(x=>x.id===id):null;
+ cur=o?{...o,days:[...(o.days||[])],date:o.date||key(new Date())}:{title:'',s:t,e:Math.min(t+60,D.we),date:k,days:[]};
+ showSh(`<h2>${id?'일정 수정':'일정 추가'}</h2><input id="ti" placeholder="제목 (예: 스터디)" value="${esc(cur.title)}">
+ <div class="row"><div><label>날짜</label><input type="date" id="dt" value="${iso(cur.date)}"></div><div><label>시작</label><input type="time" step="300" id="st" value="${hm(cur.s)}"></div><div><label>종료</label><input type="time" step="300" id="en" value="${hm(cur.e)}"></div></div>
+ <label>매주 반복할 요일 (고르면 날짜 대신 매주 적용)</label><div class="chips">${[1,2,3,4,5,6,0].map(w=>`<button class="chip ${cur.days.includes(w)?'on':''}" data-d="${w}">${WD[w]}</button>`).join('')}</div>
+ <div class="row"><button id="sv">저장</button>${id?'<button class="g" id="dl">삭제</button>':''}<button class="g" id="cl">닫기</button></div>`)}
+$('#addb').onclick=()=>openEdit(null,key(new Date()),Math.max(D.ws,600));
+function done(m){save();closeSh();refresh();toast(m)}
+$('#sh').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!cur)return;const id=b.id;
+ if(b.dataset.d!==undefined){const w=+b.dataset.d,i=cur.days.indexOf(w);i<0?cur.days.push(w):cur.days.splice(i,1);b.classList.toggle('on');return}
+ if(id==='hd'){const k=hk(cur),on=!S.hid[k];on?S.hid[k]=1:delete S.hid[k];done(on?'숨김 처리 · 예약 화면에서 빈 시간으로 보여요':'숨김 해제 완료')}
+ if(id==='ht'){const i=S.hidT.indexOf(cur.title),on=i<0;on?S.hidT.push(cur.title):S.hidT.splice(i,1);done(on?`'${cur.title}' 모두 숨김 처리`:'숨김 해제 완료')}
+ if(id==='ed')openEdit(cur.id);
+ if(id==='dl'){S.me=S.me.filter(x=>x.id!==cur.id);delete S.hid[cur.id];done('삭제 완료')}
+ if(id==='sv'){const s=tw($('#st').value),en=tw($('#en').value);if(!(en>s))return toast('종료가 시작보다 늦어야 해요');
+  const o={id:cur.id||Math.random().toString(36).slice(2),title:$('#ti').value.trim()||'일정',s,e:en};
+  if(cur.days.length)o.days=[...cur.days];else o.date=key(new Date($('#dt').value+'T00:00'));
+  S.me=S.me.filter(x=>x.id!==o.id).concat(o);done('저장 완료')}});
+$('#pvb').onclick=()=>{preview=true;admin=false;D=pubData();wk=0;sel=null;setMode();render();scrollTo(0,0)};
+$('#mb').onclick=()=>{preview=false;admin=true;sel=null;$('#sh').classList.remove('on');$('#bk').style.display='none';setMode();refresh()};
+[['sn','name'],['gr','gr'],['gt','gt'],['nt2','notice']].forEach(([i,f])=>$('#'+i).onchange=e=>{S[f]=e.target.value.trim();save()});
+$('#sws').onchange=e=>{S.ws=tm(e.target.value);save();refresh()};$('#swe').onchange=e=>{S.we=+e.target.value;save();refresh()};
+$('#smn').onchange=e=>{S.min=+e.target.value||30;save();refresh()};$('#shd').onchange=e=>{S.hide=e.target.checked;save()};
+$('#js').onclick=()=>{copy(JSON.stringify(pubData()));toast('JSON 복사 완료 → GitHub의 availability.json에 붙여넣기')};
+$('#rs').onclick=()=>{if(confirm('직접 추가한 일정을 모두 삭제할까요?')){S.me=[];save();refresh()}};
+$('#uh').onclick=()=>{S.hid={};S.hidT=[];save();refresh();toast('숨김을 모두 해제했어요')};
+async function pubGH(){if(!S.gr||!S.gt)return toast('설정에 GitHub 저장소와 토큰을 먼저 입력해주세요');
+ const u=`https://api.github.com/repos/${S.gr}/contents/availability.json`,H={Authorization:'Bearer '+S.gt,Accept:'application/vnd.github+json'};
+ try{let sha;const g=await fetch(u,{headers:H});if(g.ok)sha=(await g.json()).sha;
+  const r=await fetch(u,{method:'PUT',headers:H,body:JSON.stringify({message:'update availability',content:btoa(unescape(encodeURIComponent(JSON.stringify(pubData())))),sha})});
+  if(!r.ok)throw 0;toast('GitHub 반영 완료 · 1~2분 뒤 예약 링크에 적용돼요')}catch(e){toast('GitHub 반영 실패 · 저장소/토큰 확인 (미리보기 화면에서는 동작하지 않아요)')}}
+$('#gh').onclick=pubGH;
+$('#stf').onchange=async e=>{const f=e.target.files[0];if(!f)return;
+ try{const d=JSON.parse(await f.text());if(!Array.isArray(d.tasks))throw 0;const ev=expand(d);
+  S.imp={at:new Date().toISOString().slice(0,16).replace('T',' '),n:ev.length,ev};save();refresh();toast(`Structured 일정 ${ev.length}개 반영 완료`);if(S.gr&&S.gt)pubGH()}
+ catch(x){toast('Structured 내보내기 JSON이 아니에요')}e.target.value=''};
+(async()=>{await gate();document.body.classList.remove('lock');D=mk();setMode();refresh()})();
+
+</script></body></html>

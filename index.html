@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>일정 예약</title>
+<style>
+:root{color-scheme:light;--bg:#f6f7f9;--fg:#1c1f26;--card:#fff;--mut:#7a808c;--ac:#2f3542;--bd:#e3e5ea;--c1:#e6e8ec;--t1:#3b3f47;--c2:#c9ccd3;--td:#fff4cf;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 -apple-system,"Pretendard","Noto Sans KR",sans-serif;touch-action:manipulation}
+body.lock main{display:none}
+main{max-width:980px;margin:0 auto;padding:10px 8px 90px}
+h1{font-size:18px;margin:4px 0}h2{font-size:15px;margin:0 0 6px}
+input,select,textarea{width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px;background:#fff;color:var(--fg);font:inherit;font-size:16px}
+textarea{min-height:70px}input[type=checkbox]{width:auto}
+button{padding:9px 14px;border:0;border-radius:8px;background:var(--ac);color:#fff;font:inherit;cursor:pointer}
+button.g{background:#fff;color:var(--fg);border:1px solid var(--bd)}button:disabled{opacity:.4;cursor:default}
+label{font-size:12px;color:var(--mut);display:block}.m{color:var(--mut);font-size:12px;margin:4px 0}
+.top,.nav,.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.top{justify-content:space-between}.nav{margin:8px 0}.row>*{flex:1;min-width:110px}
+.card,details{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin:8px 0}summary{cursor:pointer;font-weight:600}
+.notice{background:#fff8e1;border:1px solid #f1e2a8;border-radius:10px;padding:10px 12px;margin:8px 0;white-space:pre-wrap}
+details ol{margin:6px 0 0;padding-left:20px}details li{margin:3px 0}
+.r{display:grid;grid-template-columns:28px repeat(7,minmax(0,1fr))}
+.dh{text-align:center;font-weight:600;padding:4px 0;border-radius:8px}.dh small{display:block;font-weight:400;color:var(--mut);font-size:11px}.dh.td{background:var(--ac);color:#fff}.dh.td small{color:#d5d8de}.dh.past{opacity:.35}
+.cp{width:calc(100% - 4px);margin:2px;padding:5px 0;font-size:10.5px;background:#fff;color:var(--fg);border:1px solid var(--bd);letter-spacing:-.5px}
+.ax{position:relative}.ax i{position:absolute;right:3px;font-style:normal;font-size:10px;color:var(--mut);transform:translateY(-6px)}
+.col{position:relative;border-left:1px solid var(--bd);background-color:#fff;background-image:linear-gradient(to bottom,transparent calc(100% - 1px),var(--bd) 0);cursor:pointer}
+.col.td{background-color:var(--td)}.col.past{cursor:not-allowed;background-color:#eceef2}
+.fog{position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(255,255,255,.6) 0 6px,rgba(0,0,0,.035) 6px 12px);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.ev{position:absolute;left:1px;right:1px;border-radius:5px;padding:2px 3px;overflow:hidden;font-size:10.5px;line-height:1.25;background:var(--c1);color:var(--t1);cursor:default}
+.ev.me{background:var(--c2)}.ev.hid{background:transparent;border:1px dashed var(--mut);opacity:.6}.ev b{display:block;font-weight:600}.ev small{opacity:.75;font-size:9.5px}
+.ghost{position:absolute;left:1px;right:1px;border:2px dashed var(--ac);border-radius:5px;pointer-events:none}.ghost.bad{border-color:#e5484d}
+#bk{position:fixed;inset:0;background:rgba(0,0,0,.12);display:none;z-index:4}
+#sh{position:fixed;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;background:#fff;border:1px solid var(--bd);border-radius:16px 16px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom,0px));max-height:85vh;overflow:auto;box-shadow:0 -6px 24px rgba(0,0,0,.15);display:none;z-index:5}#sh.on{display:block}
+#sh .row{margin:8px 0}.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.chip{padding:7px 14px;background:#fff;color:var(--fg);border:1px solid var(--bd)}.chip.on{background:var(--ac);color:#fff}
+#gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:20}#gate .card{width:min(320px,90vw)}#gate button{margin-top:8px;width:100%}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:20px;opacity:0;transition:.2s;pointer-events:none;z-index:30;max-width:92%;text-align:center}#toast.on{opacity:1}
+@media(min-width:720px){body{font-size:15px}.ev{font-size:12px}.ev small{font-size:11px}.cp{font-size:12px}.r{grid-template-columns:36px repeat(7,minmax(0,1fr))}
+#sh{bottom:auto;top:50%;left:50%;right:auto;width:480px;transform:translate(-50%,-50%);border-radius:16px;max-height:90vh}#bk{background:rgba(0,0,0,.25)}}
+</style></head><body class=""><main>
+<div class="top"><h1 id="ti0"></h1></div>
+
+<div id="nt" class="notice" hidden></div>
+<details id="gd" open><summary>📖 이용 방법</summary><ol>
+<li>아래 표에서 <b>비어 있는(흰색) 공간</b>을 터치하면 예약창이 열려요.</li>
+<li>시작·종료 시간, 이름/팀, 목적을 입력하고 <b>‘예약 요청 멘트 복사’</b>를 누르세요.</li>
+<li>복사된 멘트를 <b>개인 채팅(카톡, 문자 등)</b>에 붙여넣어 보내주세요.</li>
+<li>날짜 아래 ‘가능 시간 복사’로 그날의 빈 시간을 복사할 수도 있어요.</li></ol></details>
+<p class="m" id="up"></p>
+<div class="nav"><button class="g" id="pv">◀</button><b id="wl"></b><button class="g" id="nx">▶</button><button class="g" id="tdy">이번 주</button><button class="g" id="ca" style="margin-left:auto">주간 전체 복사</button></div>
+<div id="cal"></div></main><div id="bk"></div><div id="sh"></div><div id="toast"></div>
+
+<script>
+const BUILD='pub';
+const $=s=>document.querySelector(s),P=n=>String(n).padStart(2,'0'),hm=m=>P(Math.floor(m/60)%24)+':'+P(m%60),tm=v=>{const[a,b]=v.split(':');return+a*60+ +b};
+const WD='일월화수목금토',DN=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+const key=d=>`${String(d.getFullYear()).slice(2)}/${d.getMonth()+1}/${d.getDate()}`;
+const pk=k=>{const[a,b,c]=k.split('/').map(Number);return new Date(2000+a,b-1,c)};
+const iso=k=>{const[a,b,c]=k.split('/').map(Number);return`20${a}-${P(b)}-${P(c)}`};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const todayD=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
+let D,admin=BUILD==='adm',preview=false,wk=0,sel=null,cur=null,PPM=.8,RM=[];
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2600)}
+async function copy(t){try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(_){}a.remove()}}
+const monday=o=>{const d=todayD();d.setDate(d.getDate()-((d.getDay()+6)%7)+o*7);return d};
+const dayEv=(k,w)=>D.events.filter(e=>e.date?e.date===k:(e.days||[]).includes(w));
+function free(k,w){const b=dayEv(k,w).filter(e=>!e.h).map(e=>[e.s,e.e]).sort((a,b)=>a[0]-b[0]),f=[];let c=D.ws;for(const[s,e]of b){if(s>c)f.push([c,Math.min(s,D.we)]);c=Math.max(c,e)}if(c<D.we)f.push([c,D.we]);return f.filter(r=>r[1]-r[0]>=D.min)}
+const line=(k,f)=>`${k} ${f.map(r=>hm(r[0])+'~'+hm(r[1])).join(', ')} 가능`;
+const tw=v=>{const t=tm(v);return t<D.ws?t+1440:t};
+const showSh=h=>{$('#sh').innerHTML=h;$('#sh').classList.add('on');$('#bk').style.display='block'};
+const closeSh=()=>{$('#sh').classList.remove('on');$('#bk').style.display='none';sel=null;cur=null;render()};
+$('#bk').onclick=closeSh;
+function render(){PPM=innerWidth>=720?1.05:.8;const m=monday(wk),H=(D.we-D.ws)*PPM,T=todayD(),today=key(T);RM=[];
+ const y0=(Math.ceil(D.ws/60)*60-D.ws)*PPM,bg=`background-size:100% ${60*PPM}px;background-position:0 ${y0-60*PPM}px`;
+ let h='<div></div>',c='<div></div>',b=`<div class="ax" style="height:${H}px">`;
+ for(let t=Math.ceil(D.ws/60)*60;t<D.we;t+=60)b+=`<i style="top:${(t-D.ws)*PPM}px">${(t/60)%24}</i>`;b+='</div>';
+ for(let i=0;i<7;i++){const d=new Date(m);d.setDate(m.getDate()+i);const k=key(d),w=d.getDay(),past=!admin&&d<T,td=k===today;
+  h+=`<div class="dh ${td?'td':''} ${past?'past':''}">${WD[w]}<small>${d.getMonth()+1}/${d.getDate()}</small></div>`;
+  c+=`<div><button class="cp" ${past?'disabled':''} data-k="${k}" data-w="${w}">${past?'지난 날':'가능 시간 복사'}</button></div>`;
+  b+=`<div class="col ${td?'td':''} ${past?'past':''}" data-k="${k}" data-p="${past?1:0}" style="height:${H}px;${bg}">`+(past?'<div class="fog"></div>':dayEv(k,w).map(e=>{const s=Math.max(e.s,D.ws),en=Math.min(e.e,D.we);if(en<=s)return'';
+   return`<div class="ev ${e.id&&admin?'me':''} ${e.h?'hid':''}" data-i="${RM.push(e)-1}" style="top:${(s-D.ws)*PPM}px;height:${(en-s)*PPM-1}px"><b>${esc(e.title)}</b><small>${hm(e.s)}~${hm(e.e)}</small></div>`}).join(''))
+  +(sel&&sel.k===k&&sel.e>sel.t?`<div class="ghost ${sel.bad?'bad':''}" style="top:${(sel.t-D.ws)*PPM}px;height:${(sel.e-sel.t)*PPM}px"></div>`:'')+'</div>'}
+ $('#cal').innerHTML=`<div class="r">${h}</div><div class="r">${c}</div><div class="r">${b}</div>`;
+ const e=new Date(m);e.setDate(e.getDate()+6);$('#wl').textContent=`${key(m)} ~ ${key(e)}`;$('#pv').disabled=!admin&&wk<=0;
+ $('#ti0').textContent=admin?'📅 관리자 모드':`📅 ${D.name?D.name+'님 ':''}일정 예약`;$('#up').textContent=admin?'':(D.updated?'업데이트 '+D.updated:'');
+ $('#gd').hidden=admin;$('#nt').hidden=admin||!D.notice;$('#nt').textContent=D.notice||''}
+$('#cal').onclick=e=>{const cp=e.target.closest('.cp');
+ if(cp&&!cp.disabled){const k=cp.dataset.k,f=free(k,+cp.dataset.w);if(!f.length)return toast(k+' 가능 시간 없음');copy(line(k,f));return toast(k+' 가능 시간 복사 완료')}
+ const ev=e.target.closest('.ev');if(ev){if(admin)openAct(RM[+ev.dataset.i]);return}
+ const col=e.target.closest('.col');if(!col)return;if(col.dataset.p==='1')return toast('지난 날짜는 예약할 수 없어요');
+ const t=Math.floor((D.ws+(e.clientY-col.getBoundingClientRect().top)/PPM)/30)*30;
+ admin?openEdit(null,col.dataset.k,t):openBook(col.dataset.k,t)};
+$('#ca').onclick=()=>{const m=monday(wk),o=[],T=todayD();for(let i=0;i<7;i++){const d=new Date(m);d.setDate(m.getDate()+i);if(!admin&&d<T)continue;const f=free(key(d),d.getDay());if(f.length)o.push(line(key(d),f))}copy(o.join('\n'));toast('이번 주 가능 시간 복사 완료')};
+$('#pv').onclick=()=>{wk--;render()};$('#nx').onclick=()=>{wk++;render()};$('#tdy').onclick=()=>{wk=0;render()};
+// 예약
+function openBook(k,t){sel={k,t,e:Math.min(t+60,D.we),p:'회의'};
+ showSh(`<h2>${k} (${WD[pk(k).getDay()]}) 예약 요청</h2><div class="row"><div><label>시작</label><input type="time" step="300" id="bt" value="${hm(sel.t)}"></div><div><label>종료</label><input type="time" step="300" id="be" value="${hm(sel.e)}"></div></div><p id="bm" class="m"></p>
+ <input id="bn" placeholder="이름/팀 (예: 홍길동/OO팀)"><div class="chips" id="pp">${['회의','개인활동','기타'].map(p=>`<button class="chip ${p=='회의'?'on':''}" data-p="${p}">${p}</button>`).join('')}</div><input id="bx" placeholder="기타 목적을 입력하세요" hidden>
+ <div class="row" style="margin-top:10px"><button id="rq">예약 요청 멘트 복사</button><button class="g" id="cl">닫기</button></div><p class="m">복사한 멘트를 개인 채팅(카톡, 문자 등)에 붙여넣어 보내주세요.</p>`);
+ $('#bt').oninput=$('#be').oninput=chk;chk()}
+function chk(){sel.t=tw($('#bt').value||'00:00');sel.e=tw($('#be').value||'00:00');const past=new Date(pk(sel.k).getTime()+sel.t*6e4)<new Date();
+ const ok=!past&&sel.e>sel.t&&free(sel.k,pk(sel.k).getDay()).some(r=>r[0]<=sel.t&&sel.e<=r[1]);sel.bad=!ok;
+ $('#bm').textContent=ok?`✅ ${hm(sel.t)}~${hm(sel.e)} 예약 가능`:sel.e<=sel.t?'⚠ 종료가 시작보다 늦어야 해요':past?'⚠ 지난 시간이에요':'⚠ 이 시간은 비어 있지 않아요 (빈 구간 안에서 입력해주세요)';render();return ok}
+const josa=n=>{const c=n.replace(/[^가-힣A-Za-z0-9]+$/,'').slice(-1);return/[가-힣]/.test(c)?((c.charCodeAt(0)-44032)%28?'이':'가'):'이(가)'};
+function msg(){if(!chk())return toast('이 시간은 예약할 수 없어요'),null;const n=$('#bn').value.trim(),p=sel.p==='기타'?$('#bx').value.trim():sel.p;
+ if(!n)return toast('이름/팀을 입력해주세요'),null;if(!p)return toast('기타 목적을 입력해주세요'),null;
+ return`${sel.k} ${hm(sel.t)}~${hm(sel.e)} ${n}${josa(n)} ${p} 목적으로 예약을 요청합니다`}
+$('#sh').onclick=async e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.id==='cl')return closeSh();
+ if(b.dataset.p){sel.p=b.dataset.p;document.querySelectorAll('#pp .chip').forEach(c=>c.classList.toggle('on',c===b));$('#bx').hidden=sel.p!=='기타'}
+ if(b.id==='rq'){const t=msg();if(t){await copy(t);toast('예약 요청 멘트 복사 완료 · 개인 채팅에 붙여넣어 보내주세요')}}};
+
+(async()=>{D={events:[],ws:480,we:1500,min:30};try{const r=await fetch('availability.json?'+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;D=Object.assign(D,await r.json())}catch(e){}admin=false;render()})();
+
+
+</script></body></html>
